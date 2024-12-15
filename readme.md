@@ -3,13 +3,21 @@
 
 
 * Install wireguard using `sudo apt install wireguard`
-* then generate public and private key by running `umask 077 && wg genkey | tee privatekey | wg pubkey > publickey`
+* then generate public and private key by running `umask 077 && wg genkey | tee privatekey | wg pubkey > publickey` and now note down the private key somewhere. cat `privatekey`
 
 ## ALLOW TRAFFIC FORWARDNING
 
 * open this file `sudo nano /etc/sysctl.conf`
 * find this line `net.ipv4.ip_forward=1` and uncomment it
 * find this line `net.ipv6.ip_forward=1` and uncomment it.
+* then `sudo sysctl -p` to apply these changes
+
+## ENABLE FIREWALL
+* `sudo ufw allow 22`
+* `sudo ufw allow 22/tcp`
+* `sudo ufw allow ssh`
+* `sudo ufw allow 51820/udp`
+* `sudo ufw enable`
 
 ## SERVER CONFIG
 
@@ -31,6 +39,8 @@ AllowedIPs = 10.0.0.2/32
 PublicKey = C9RtuVI6HHGDEuX/LwnlxRmmwefzOfl70/iubHO31hA=
 AllowedIPs = 10.0.0.3/32
 ```
-
 Here above `eth0` is going to be the default internet of the server
 to check the default run `ip route list default`
+
+* after this is done run `wg-quick up wg0` and then `sudo systemctl enable wg-quick@wg0`
+* adding any new Peer will need to modify the `/etc/wireguard/wg0.conf` and then run `wg-quick down wg0` and again `wg-quick up wg0`
